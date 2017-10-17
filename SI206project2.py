@@ -14,6 +14,7 @@ import unittest
 import requests
 import re
 from bs4 import BeautifulSoup
+import urllib.request, urllib.parse, urllib.error
 
 
 ## Part 1 -- Define your find_urls function here.
@@ -27,8 +28,9 @@ from bs4 import BeautifulSoup
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
 def find_urls(s):
-    pass
-    #Your code here
+    #re.findall
+    return re.findall(r'(https?://[^.][^\s]+)', s)
+
 
 
 
@@ -38,8 +40,16 @@ def find_urls(s):
 ## http://www.michigandaily.com/section/opinion
 
 def grab_headlines():
-    pass
-    #Your code here
+    #read in url
+    url = 'http://www.michigandaily.com/section/opinion'
+    html = urllib.request.urlopen(url).read()
+    #convert to beautiful soup
+    soup = BeautifulSoup(html, 'html.parser')
+
+    #tag = ''
+    #for x in soup('h2'):
+    x = soup.find('div', attrs={'class' : 'pane-title'})
+    print (x)
 
 
 
