@@ -43,7 +43,7 @@ def grab_headlines():
     #read in url
     url = 'http://www.michigandaily.com/section/opinion'
     html = urllib.request.urlopen(url).read()
-    #convert to beautiful soup
+    #convert to beautiful soup so we can parse it
     soup = BeautifulSoup(html, 'html.parser')
 
     #tag = ''
@@ -65,15 +65,21 @@ def grab_headlines():
 ## requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
 
 def get_umsi_data():
-    pass
-    #Your code here
+    #create dictionary, want keys = UMSI people's names, values = titles
+    umsi_titles = {}
+    url = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
+
+
+    return umsi_titles
 
 ## PART 3 (b) Define a function called num_students.
 ## INPUT: The dictionary from get_umsi_data().
 ## OUTPUT: Return number of PhD students in the data.  (Don't forget, I may change the input data)
 def num_students(data):
     pass
-    #Your code here
+    #iterate over umsi_titles dict values to count num of PhD students in the data
+    count = 0
+    #for person in data:
 
 
 
