@@ -2,7 +2,7 @@
 
 ## COMMENT HERE WITH:
 ## Your name: Olivia Gardella
-## Anyone you worked with on this project:
+## Anyone you worked with on this project: Julie Burke
 
 ## Below we have provided import statements, comments to separate out the
 #parts of the project, instructions/hints/examples, and at the end, TESTS.
@@ -28,8 +28,9 @@ import urllib.request, urllib.parse, urllib.error
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
 def find_urls(s):
-    #re.findall
-    return re.findall(r'(https?://[^.][^\s]+)', s)
+    #use re.findall, \w+ is non whitespace
+    #find every website and return it
+    return re.findall('(https?://\w+(?:\.[\S+]{2,})+)', s)
 
 
 
@@ -41,15 +42,23 @@ def find_urls(s):
 
 def grab_headlines():
     #read in url
-    url = 'http://www.michigandaily.com/section/opinion'
+    #url = 'http://www.michigandaily.com/section/opinion' ###########################################CHANGE TO THIS BEFORE SUBMITTING!!!
+    url = 'file:///C:/Users/opgar/Documents/SI206/Project2/opinion.html'
     html = urllib.request.urlopen(url).read()
     #convert to beautiful soup so we can parse it
     soup = BeautifulSoup(html, 'html.parser')
 
-    #tag = ''
-    #for x in soup('h2'):
-    x = soup.find('div', attrs={'class' : 'pane-title'})
-    print (x)
+    #initate headlines list
+    headlines = []
+    #iterate over everything in the aside tag
+    for x in soup('aside'):
+        #find every headline
+        info = re.findall('<li.+href.+>(.+)</a></li>', str(x))
+        #for every headline, append it to the headlines list
+        for i in info:
+            headlines.append(i)  #append all the headlines to the list
+    return headlines
+    #print (headlines)
 
 
 
@@ -65,21 +74,55 @@ def grab_headlines():
 ## requests.get(base_url, headers={'User-Agent': 'SI_CLASS'})
 
 def get_umsi_data():
-    #create dictionary, want keys = UMSI people's names, values = titles
+    #initate the dictionary
     umsi_titles = {}
-    url = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
+    urls = ['https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All']
+    #iterate over every page in the range we want, adding each url to the urls list
+    for x in range(12):
+        url = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All'
+        link = url + '&page=' + str(x+1)
+        urls.append(link)
 
+    #iterate over every url in urls list
+    for url in urls:
+        info = requests.get(url, headers={'User-Agent': 'SI_CLASS'})
+        soup = BeautifulSoup(info.content,'html.parser')
+        #find the 'body' tags
+        tags = soup('body')
+        #iterate over every body tag
+        for tag in tags:
+            #find every name on the page
+            names = re.findall('property="dc:title"><h2>(.+)</h2>', str(tag))
+            #find the associated values with every name
+            fields = re.findall('<div class="field-item even">(.+)</div></div></div></div>', str(tag))
+            #add to the dictionary with the names as the keys and their associated values as the values
+            for i in range(len(names)):
+                umsi_titles[names[i]] = fields[i].replace('&amp', "&")
 
     return umsi_titles
+
+    print ('***')
+    print (umsi_titles)
+    print ('***')
+
 
 ## PART 3 (b) Define a function called num_students.
 ## INPUT: The dictionary from get_umsi_data().
 ## OUTPUT: Return number of PhD students in the data.  (Don't forget, I may change the input data)
 def num_students(data):
-    pass
-    #iterate over umsi_titles dict values to count num of PhD students in the data
+    #want to iterate over umsi_titles dict values to count num of PhD students in the data
+    #initiate count variable
     count = 0
-    #for person in data:
+    #interate over every person in the dictionary passed in
+    for person in data:
+        #if "PhD student" is in that person's titles, increase count by 1
+        if 'PhD student' in data[person]:
+            count += 1
+    return count
+
+
+
+
 
 
 
